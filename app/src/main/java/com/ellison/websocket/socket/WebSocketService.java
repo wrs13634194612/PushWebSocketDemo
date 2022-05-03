@@ -15,10 +15,14 @@ import android.widget.Toast;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
+import com.ellison.websocket.MyApp;
 import com.ellison.websocket.PushBean;
+import com.ellison.websocket.request.ConnectBean;
+import com.ellison.websocket.request.HeartBean;
 import com.ellison.websocket.request.WsRequest;
 import com.ellison.websocket.request.WsStringRequest;
 import com.ellison.websocket.response.LogoutResponse;
+import com.ellison.websocket.utils.AppUtils;
 import com.google.gson.Gson;
 
 import java.net.ConnectException;
@@ -251,8 +255,9 @@ public class WebSocketService extends Service {
                                     @Override
                                     public void onMessage(WebSocket webSocket, String text) {
                                         super.onMessage(webSocket, text);
+                                        Log.e(LOG_TAG, "-----初始化WebSocket_onMessage -----"+text);
 
-                                        dispatchStringMessage(text);
+                                        // dispatchStringMessage(text);
                                         if (mWsStatusListener != null) {
                                             mWsStatusListener.onMessage(webSocket, text);
                                         }
@@ -456,7 +461,13 @@ public class WebSocketService extends Service {
                             listener.handleData(s);
                         }
                         //连接成功  发送 字符串
-                        sendRequest(new WsStringRequest("first connect"));
+                        String packageName = AppUtils.getPackageName(MyApp.getApplication());
+                        int uid = AppUtils.getUid(MyApp.getApplication(), packageName);
+                        ConnectBean mConnectBean = new ConnectBean();
+                        mConnectBean.setToken("");
+                        mConnectBean.setUserId("minApp113988");
+                        mConnectBean.setUid(String.valueOf(uid));
+                        sendRequest(mConnectBean);
                     }
 
                     @Override
@@ -575,7 +586,12 @@ public class WebSocketService extends Service {
             @Override
             public void run() {
                 if (mWebSocket != null) {
-                    sendRequest(WsObjectPool.newPongRequest());
+                    String packageName = AppUtils.getPackageName(MyApp.getApplication());
+                    int uid = AppUtils.getUid(MyApp.getApplication(), packageName);
+                    HeartBean mHeartBean = new HeartBean();
+                    mHeartBean.setConnect("connect");
+                    mHeartBean.setUid(String.valueOf(uid));
+                    sendRequest(mHeartBean);
                 }
             }
         }, 10, 10, TimeUnit.SECONDS);

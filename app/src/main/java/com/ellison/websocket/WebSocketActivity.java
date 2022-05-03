@@ -12,11 +12,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.ellison.websocket.request.SendMsgBean;
 import com.ellison.websocket.request.WsStringRequest;
 import com.ellison.websocket.socket.SocketConstants;
 import com.ellison.websocket.socket.WebSocketService;
 import com.ellison.websocket.socket.WsListener;
 import com.ellison.websocket.socket.WsStatusListener;
+import com.ellison.websocket.utils.AppUtils;
 import com.ellison.websocket.utils.RxLifecycleUtils;
 import com.google.gson.Gson;
 import com.jakewharton.rxbinding2.view.RxView;
@@ -41,7 +43,8 @@ public class WebSocketActivity extends AppCompatActivity {
      */
     private boolean isConnected = false;
 
-    /**ws://192.168.101.227:1024/channel
+    /**
+     * ws://192.168.101.227:1024/channel
      * WebSocket服务
      */
     @Nullable
@@ -60,7 +63,7 @@ public class WebSocketActivity extends AppCompatActivity {
 
         mEt = findViewById(R.id.et);
         mEt.setText("ws://192.168.101.227:1024/channel");
-       // mEt.setText("ws://192.168.101.9:1024/channel");
+      //   mEt.setText("ws://192.168.101.9:1024/channel");
 
         mBtnConnect = findViewById(R.id.btn_connect);
         mBtnDisConnect = findViewById(R.id.btn_dis_connect);
@@ -119,8 +122,15 @@ public class WebSocketActivity extends AppCompatActivity {
                         } else {
                             mTvInfo.setText("客户端发送数据: " + mEtData.getText().toString());
                         }
-
-                        mWebSocketService.sendRequest(new WsStringRequest("jsonString"));  //不是 这个是点击发送的具体信息  这个没什么问题
+                        String packageName = AppUtils.getPackageName(MyApp.getApplication());
+                        int uid = AppUtils.getUid(MyApp.getApplication(), packageName);
+                        SendMsgBean mSendMsgBean = new SendMsgBean();
+                        mSendMsgBean.setToken("");
+                        mSendMsgBean.setModel("accountShare");
+                        mSendMsgBean.setUserId("minApp113988");
+                        mSendMsgBean.setShareId("minApp103043");
+                        mSendMsgBean.setUid(String.valueOf(uid));
+                        mWebSocketService.sendRequest(mSendMsgBean);  //不是 这个是点击发送的具体信息  这个没什么问题
                     }
                 }, new Consumer<Throwable>() {
                     @Override
@@ -166,7 +176,7 @@ public class WebSocketActivity extends AppCompatActivity {
                     if (!TextUtils.isEmpty(s)) {
                         mTvInfo.setText(s + "\n" + "接收服务器数据: " + o.toString());
                     } else {
-                        mTvInfo.setText("接收服务器数据: " + o.toString());
+                        mTvInfo.setText("接受服务器数据: " + o.toString());
                     }
                 }
             });
