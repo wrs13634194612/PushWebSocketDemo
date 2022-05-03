@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/btn_common_spot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="普通DrawingCache截图"
+        android:textAllCaps="false"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_common_layout_spot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="普通layout截图"
+        android:textAllCaps="false"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_common_spot" />
+
+    <Button
+        android:id="@+id/btn_common_spot_canvas"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="普通Canvas截图"
+        android:textAllCaps="false"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_common_layout_spot" />
+
+
+    <Button
+        android:id="@+id/btn_common_recycler_spot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="普通RecyclerView截图"
+        android:textAllCaps="false"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_common_spot_canvas" />
+
+    <Button
+        android:id="@+id/btn_start_blue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="打开蓝牙"
+        android:textAllCaps="false"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_common_recycler_spot" />
+
+</android.support.constraint.ConstraintLayout>
