@@ -135,7 +135,7 @@ public class BlueActivity extends AppCompatActivity {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 // Add the name and address to an array adapter to show in a ListView
                 mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
-                Log.d("发现设备：", device.getName() + "\n" + device.getAddress());
+                Log.e("发现设备：", device.getName() + "\n" + device.getAddress());
                 mMyAdapter.notifyDataSetChanged();
             }
         }

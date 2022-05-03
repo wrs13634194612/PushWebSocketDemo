@@ -120,12 +120,12 @@ public class WebSocketActivity extends AppCompatActivity {
                             mTvInfo.setText("客户端发送数据: " + mEtData.getText().toString());
                         }
 
-                        mWebSocketService.sendRequest(new WsStringRequest("jsonString"));
+                        mWebSocketService.sendRequest(new WsStringRequest("jsonString"));  //不是 这个是点击发送的具体信息  这个没什么问题
                     }
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
-                        Log.d(TAG, throwable.toString());
+                        Log.e(TAG, throwable.toString());
                     }
                 });
     }
@@ -156,7 +156,7 @@ public class WebSocketActivity extends AppCompatActivity {
     private ServiceConnection wsConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.d(TAG, "Service connected.");
+            Log.e(TAG, "Service connected.");
             mWebSocketService = ((WebSocketService.ServiceBinder) service).getService();
 
             mWebSocketService.registerListener(SocketConstants.ResponseType.RESPONSE_STRING_MESSAGE, new WsListener() {
@@ -205,7 +205,7 @@ public class WebSocketActivity extends AppCompatActivity {
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            Log.i(TAG, "Service disconnected.");
+            Log.e(TAG, "Service disconnected.");
             mWebSocketService = null;
         }
     };

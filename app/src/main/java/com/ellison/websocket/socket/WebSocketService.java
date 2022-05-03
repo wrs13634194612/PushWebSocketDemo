@@ -17,6 +17,7 @@ import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.ellison.websocket.PushBean;
 import com.ellison.websocket.request.WsRequest;
+import com.ellison.websocket.request.WsStringRequest;
 import com.ellison.websocket.response.LogoutResponse;
 import com.google.gson.Gson;
 
@@ -54,7 +55,7 @@ public class WebSocketService extends Service {
      * 连接WebSocket传的url
      */
     public static final String WEB_SOCKET_URL = "socket_url";
-    private static final String LOG_TAG = "WebSocket";
+    private static final String LOG_TAG = "wrs";
 
     /**
      * 标记是否正在连接中，用于自检服务避免重复发起连接。
@@ -120,7 +121,7 @@ public class WebSocketService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        Log.v(LOG_TAG, "----- onBind -----");
+        Log.e(LOG_TAG, "----- onBind -----");
         socketUrl = intent.getStringExtra(WEB_SOCKET_URL);
         return new ServiceBinder();
     }
@@ -140,7 +141,7 @@ public class WebSocketService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.i(LOG_TAG, "----- onCreate -----");
+        Log.e(LOG_TAG, "----- onCreate -----");
         initSocketWrapper("InitialConnect", true);
         startSelfCheckService();
     }
@@ -155,7 +156,7 @@ public class WebSocketService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.i(LOG_TAG, "----- onDestroy -----");
+        Log.e(LOG_TAG, "----- onDestroy -----");
     }
 
     /**
@@ -179,7 +180,7 @@ public class WebSocketService extends Service {
                     @Override
                     public boolean test(String s) throws Exception {
                         if (isAttemptConnecting) {
-                            Log.v(LOG_TAG, startReason + " : Should reconnect but already in process, skip.");
+                            Log.e(LOG_TAG, startReason + " : Should reconnect but already in process, skip.");
                             return Boolean.FALSE;
                         }
                         return Boolean.TRUE;
@@ -209,7 +210,7 @@ public class WebSocketService extends Service {
         }
 
         isAttemptConnecting = true;
-        Log.v(LOG_TAG, "Set isAttemptConnecting flag to true");
+        Log.e(LOG_TAG, "Set isAttemptConnecting flag to true");
 
         // 开始初始化
         Observable
@@ -218,7 +219,7 @@ public class WebSocketService extends Service {
                             @Override
                             public void subscribe(ObservableEmitter<WebSocket> emitter) throws Exception {
                                 connectionAttemptCount++;
-                                Log.d(LOG_TAG, "Connection attempt: " + connectionAttemptCount);
+                                Log.e(LOG_TAG, "Connection attempt: " + connectionAttemptCount);
 
                                 //TODO 这里可以进行登录业务判断
 
@@ -268,7 +269,7 @@ public class WebSocketService extends Service {
                                     @Override
                                     public void onClosing(WebSocket webSocket, int code, String reason) {
                                         super.onClosing(webSocket, code, reason);
-                                        Log.i(LOG_TAG, "onClosing: WebSocket onClosing.");
+                                        Log.e(LOG_TAG, "onClosing: WebSocket onClosing.");
                                         if (mWsStatusListener != null) {
                                             mWsStatusListener.onClosing(webSocket, code, reason);
                                         }
@@ -278,7 +279,7 @@ public class WebSocketService extends Service {
                                     public void onClosed(WebSocket webSocket, int code, String reason) {
                                         super.onClosed(webSocket, code, reason);
 
-                                        Log.i(LOG_TAG, "ClosedCallback: WebSocket closed.");
+                                        Log.e(LOG_TAG, "ClosedCallback: WebSocket closed.");
 
                                         isAttemptConnecting = false;
 
@@ -294,7 +295,7 @@ public class WebSocketService extends Service {
                                     @Override
                                     public void onFailure(WebSocket webSocket, Throwable t, @javax.annotation.Nullable Response response) {
                                         super.onFailure(webSocket, t, response);
-                                        Log.i(LOG_TAG, "onFailure: WebSocket onFailure.");
+                                        Log.e(LOG_TAG, "onFailure: WebSocket onFailure.");
 
                                         // 断网非正常关闭
                                         mWebSocket = null;
@@ -330,7 +331,7 @@ public class WebSocketService extends Service {
                         new Consumer<Throwable>() {
                             @Override
                             public void accept(Throwable throwable) throws Exception {
-                                Log.d(LOG_TAG, "WebSocket init failed!");
+                                Log.e(LOG_TAG, "WebSocket init failed!");
                                 throwable.printStackTrace();
 
                                 // 判断是否需要执行诊断服务
@@ -338,7 +339,7 @@ public class WebSocketService extends Service {
                                     Log.e(LOG_TAG, "Continuous connection error occurred for " + connectionAttemptCount + " times!");
 
                                     // 强制开始诊断服务
-                                    Log.i(LOG_TAG, "Force starting diagnosis service");
+                                    Log.e(LOG_TAG, "Force starting diagnosis service");
                                     startService(new Intent(WebSocketService.this, NetworkDiagnosisService.class));
 
                                     // 重置标记
@@ -353,7 +354,7 @@ public class WebSocketService extends Service {
      * 对外提供销毁方法
      */
     public void prepareShutDown() {
-        Log.i(LOG_TAG, "----- prepareShutdown -----");
+        Log.e(LOG_TAG, "----- prepareShutdown -----");
         preparedShutdown = true;
 
         stopSelfCheckService();
@@ -382,7 +383,7 @@ public class WebSocketService extends Service {
                     @Override
                     public boolean test(Long aLong) throws Exception {
                         if (!shouldAutoReconnect) {
-                            Log.i(LOG_TAG, "Auto reconnect has been disabled, maybe kicked?");
+                            Log.e(LOG_TAG, "Auto reconnect has been disabled, maybe kicked?");
                         }
                         return shouldAutoReconnect;
                     }
@@ -397,16 +398,16 @@ public class WebSocketService extends Service {
                 .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
                     public void accept(Disposable disposable) throws Exception {
-                        Log.i(LOG_TAG, "Self check task has been scheduled per " + 10 + " seconds.");
+                        Log.e(LOG_TAG, "Self check task has been scheduled per " + 10 + " seconds.");
                         shouldAutoReconnect = true;
-                        Log.i(LOG_TAG, "Auto reconnect feature has been enabled.");
+                        Log.e(LOG_TAG, "Auto reconnect feature has been enabled.");
                     }
                 })
                 .subscribe(new Consumer<Boolean>() {
                                @Override
                                public void accept(Boolean webSocketAlive) throws Exception {
                                    if (webSocketAlive) {
-                                       Log.v(LOG_TAG, "WebSocket self check: is alive.");
+                                       Log.e(LOG_TAG, "WebSocket self check: is alive.");
                                        return;
                                    }
                                    // 自检服务器打开
@@ -428,7 +429,7 @@ public class WebSocketService extends Service {
     private void stopSelfCheckService() {
         if (mSelfCheckDispose != null && (!mSelfCheckDispose.isDisposed())) {
             mSelfCheckDispose.dispose();
-            Log.i(LOG_TAG, "Self check service has been unSubscribed.");
+            Log.e(LOG_TAG, "Self check service has been unSubscribed.");
         }
     }
 
@@ -450,10 +451,12 @@ public class WebSocketService extends Service {
                     @Override
                     public void onNext(String s) {
                         WsListener<String> listener = (WsListener<String>) activeListener.get(SocketConstants.ResponseType.RESPONSE_STRING_MESSAGE);
-                        Log.d(LOG_TAG, "Msg entity: " + s + ".");
+                        Log.e(LOG_TAG, "Msg entity one: " + s + ".");
                         if (listener != null) {
                             listener.handleData(s);
                         }
+                        //连接成功  发送 字符串
+                        sendRequest(new WsStringRequest("first connect"));
                     }
 
                     @Override
@@ -503,7 +506,7 @@ public class WebSocketService extends Service {
             Log.e(LOG_TAG, "Cannot parse type from msg!");
             return;
         }
-        Log.v(LOG_TAG, "Dispatching msg type : " + type);
+        Log.e(LOG_TAG, "Dispatching msg type : " + type);
 
         switch (type) {
             // 登出操作
@@ -524,7 +527,7 @@ public class WebSocketService extends Service {
      * @param <T>
      */
     private <T> void notifyListener(String msg, String type, Class<T> clazz) {
-        Log.d("《《type》》", "notifyListener: " + type);
+        Log.e("《《type》》", "notifyListener: " + type);
 
         Observable.just(msg)
                 .map(new Function<String, T>() {
@@ -548,7 +551,7 @@ public class WebSocketService extends Service {
                             Log.e(LOG_TAG, "No listener handle type " + type + ", discard this.");
                             return;
                         }
-                        Log.d(LOG_TAG, "Msg entity: " + data.toString() + ".");
+                        Log.e(LOG_TAG, "Msg entity two: " + data.toString() + ".");
                         listener.handleData(data);
                     }
 
@@ -576,7 +579,7 @@ public class WebSocketService extends Service {
                 }
             }
         }, 10, 10, TimeUnit.SECONDS);
-        Log.i(LOG_TAG, "Pong service has been scheduled at " + 10 + " seconds delay.");
+        Log.e(LOG_TAG, "Pong service has been scheduled at " + 10 + " seconds delay.");
     }
 
     /**
@@ -585,7 +588,7 @@ public class WebSocketService extends Service {
     private void stopPongDaemonService() {
         if (pongService != null && (!pongService.isShutdown())) {
             pongService.shutdownNow();
-            Log.i(LOG_TAG, "Shutdown pong service now.");
+            Log.e(LOG_TAG, "Shutdown pong service now.");
         }
     }
 
@@ -600,7 +603,7 @@ public class WebSocketService extends Service {
         //        request.setToken(userInfo.getToken());
 
         String msg = JSON.toJSONString(request);
-        Log.d(LOG_TAG, "sending msg: " + msg);
+        Losg.d(LOG_TAG, "sendsing mssg: " + msg);
         if (mWebSocket == null) {
             showUiWebSocketStatus("与服务器失去连接！！！");
             return;
@@ -618,7 +621,7 @@ public class WebSocketService extends Service {
         String jsonString =  gson.toJson(mPushBean);
         mWebSocket.send(jsonString);*/
         String msg = JSON.toJSONString(request);
-        Log.d(LOG_TAG, "sending msg: " + msg);
+        Log.e(LOG_TAG, "sending msg: " + msg);
         if (mWebSocket == null) {
             showUiWebSocketStatus("与服务器失去连接！！！");
             return;
@@ -651,7 +654,7 @@ public class WebSocketService extends Service {
      * Remove all listeners.
      */
     public void removeAllListeners() {
-        Log.i(LOG_TAG, "Removing all listeners, count= " + activeListener.size());
+        Log.e(LOG_TAG, "Removing all listeners, count= " + activeListener.size());
         activeListener.clear();
     }
 

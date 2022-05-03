@@ -44,23 +44,23 @@ public class NetworkDiagnosisService extends Service {
      * 3. 检查能否ping通QQ或百度的服务器。
      */
     public void startDiagnosis(Context context) {
-        Log.i(LOG_TAG, "------------- Start Diagnosis ---------------");
-        Log.i(LOG_TAG, "isNetworkConnected? : " + Networks.isNetworkConnected(context));
-        Log.i(LOG_TAG, "Network type = " + Networks.getNetworkType(context));
+        Log.e(LOG_TAG, "------------- Start Diagnosis ---------------");
+        Log.e(LOG_TAG, "isNetworkConnected? : " + Networks.isNetworkConnected(context));
+        Log.e(LOG_TAG, "Network type = " + Networks.getNetworkType(context));
 
         pingWithLog("www.baidu.com", 3);
         pingWithLog("www.qq.com", 3);
 
-        Log.i(LOG_TAG, "REPEAT : isNetworkConnected? " + Networks.isNetworkConnected(context));
-        Log.i(LOG_TAG, "REPEAT : Network type = " + Networks.getNetworkType(context));
-        Log.i(LOG_TAG, "------------- Finish Diagnosis ---------------");
+        Log.e(LOG_TAG, "REPEAT : isNetworkConnected? " + Networks.isNetworkConnected(context));
+        Log.e(LOG_TAG, "REPEAT : Network type = " + Networks.getNetworkType(context));
+        Log.e(LOG_TAG, "------------- Finish Diagnosis ---------------");
 
         Log.e(LOG_TAG, "Manual Diagnosis Finished " + new ManualWsDiagnosisException());
         stopSelf();
     }
 
     private void pingWithLog(String host, int count) {
-        Log.i(LOG_TAG, "Ping host " + host);
+        Log.e(LOG_TAG, "Ping host " + host);
         if (Networks.isNetworkConnected(MyApp.getApplication())) {
             ping(host, count);
         } else {
@@ -78,7 +78,7 @@ public class NetworkDiagnosisService extends Service {
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             String string;
             while ((string = reader.readLine()) != null) {
-                Log.i(LOG_TAG, string);
+                Log.e(LOG_TAG, string);
             }
             in.close();
         } catch (IOException e) {

@@ -19,7 +19,7 @@ public class WebSocketService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        Log.v(LOG_TAG, "----- onBind -----");
+        Log.e(LOG_TAG, "----- onBind -----");
         return new ServiceBinder();
     }
 
@@ -32,7 +32,7 @@ public class WebSocketService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.i(LOG_TAG, "----- onCreate -----");
+        Log.e(LOG_TAG, "----- onCreate -----");
     }
 
     @Override
@@ -44,7 +44,7 @@ public class WebSocketService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.i(LOG_TAG, "----- onDestroy -----");
+        Log.e(LOG_TAG, "----- onDestroy -----");
     }
 
 }
